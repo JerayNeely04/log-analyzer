@@ -1,0 +1,6 @@
+2025-08-17 22:11:01 - LOGIN FAILED - user: admin - IP: 192.168.1.10
+2025-08-17 22:11:05 - LOGIN FAILED - user: admin - IP: 192.168.1.10
+2025-08-17 22:11:07 - LOGIN SUCCESS - user: admin - IP: 192.168.1.10
+2025-08-17 22:12:15 - LOGIN FAILED - user: guest - IP: 10.0.0.5
+2025-08-17 22:12:20 - LOGIN FAILED - user: guest - IP: 10.0.0.5
+2025-08-17 22:12:25 - LOGIN FAILED - user: guest - IP: 10.0.0.5
