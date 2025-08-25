@@ -1,11 +1,10 @@
 from flask import Flask, render_template, request
 import os
-import re
 import requests
+import re
 
 app = Flask(__name__)
 
-# Ensure uploads folder exists
 if not os.path.exists("uploads"):
     os.makedirs("uploads")
 
@@ -30,25 +29,26 @@ def analyze_log(filepath, threshold=3):
     suspicious_ips = {}
     with open(filepath, "r") as f:
         for line in f:
-            if "LOGIN FAILED" in line:
+            if "LOGIN FAILED" in line:  # match failed login lines
                 match = re.search(r"IP:\s*([\d\.]+)", line)
                 if match:
                     ip = match.group(1)
                     suspicious_ips[ip] = suspicious_ips.get(ip, 0) + 1
 
-    # Apply threshold
+    # Filter by threshold
     suspicious_ips = {ip: count for ip, count in suspicious_ips.items() if count >= threshold}
 
     # Build results list
     results = [{"ip": ip, "count": count, "location": get_ip_location(ip)} for ip, count in suspicious_ips.items()]
+
     return results
 
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET", "POST"])        
 def index():
     results = []
     if request.method == "POST":
-        uploaded_file = request.files.get("logfile")  # <-- important
+        uploaded_file = request.files.get("logfile")           
         threshold = int(request.form.get("threshold", 3))
 
         if uploaded_file and uploaded_file.filename != "":
