@@ -1,0 +1,29 @@
+from flask import Flask, render_template, request
+from collections import defaultdict
+from your_script import analyze_logs  # assuming your analyze_logs is importable
+
+app = Flask(__name__)
+
+@app.route("/", methods=["GET", "POST"])
+def dashboard():
+    results = []  # default to empty list
+    if request.method == "POST":
+        logfile = request.form.get("logfile")
+        threshold = int(request.form.get("threshold", 3))
+
+        # Analyze logs
+        failed_attempts = defaultdict(int)
+        try:
+            with open(logfile, "r") as f:
+                for line in f:
+                    if "LOGIN FAILED" in line:
+                        match = re.search(r"IP: (\d+\.\d+\.\d+\.\d+)", line)
+                        if match:
+                            ip = match.group(1)
+                            failed_attempts[ip] += 1
+        except FileNotFoundError:
+            results.append({"error": f"File '{logfile}' not found"})
+        else:
+            for ip, count in failed_attempts.items():
+                if count >= threshold:
+                    location = get
