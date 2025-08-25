@@ -3,132 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <title>Log Analyzer Dashboard</title>
-    <style>
-        /* Reset and general styling */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f8;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 50px auto;
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-        }
-
-        form {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            gap: 15px;
-        }
-
-        label {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        input[type="file"], input[type="number"] {
-            padding: 8px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            flex: 1;
-        }
-
-        button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #2980b9;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            text-align: left;
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #3498db;
-            color: white;
-        }
-
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        .no-results {
-            text-align: center;
-            color: #888;
-            font-style: italic;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Suspicious Login Analyzer</h1>
+<div class="container">
+    <h1>Suspicious Login Analyzer</h1>
 
-        <form method="POST" enctype="multipart/form-data">
-            <div style="flex: 2;">
-                <label for="logfile">Select Log File:</label>
-                <input type="file" id="logfile" name="logfile" required>
-            </div>
-            <div style="flex: 1;">
-                <label for="threshold">Threshold:</label>
-                <input type="number" id="threshold" name="threshold" value="3" min="1" required>
-            </div>
-            <div style="flex: 1; align-self: flex-end;">
-                <button type="submit">Analyze</button>
-            </div>
-        </form>
+    <nav>
+        <a href="{{ url_for('index') }}">Upload & Analyze</a>
+        <a href="{{ url_for('history') }}">History</a>
+    </nav>
 
-        <h2>Results</h2>
-        {% if results %}
+    <form method="POST" enctype="multipart/form-data">
+        <div style="flex: 2;">
+            <label for="logfile">Select Log File:</label>
+            <input type="file" id="logfile" name="logfile" required>
+        </div>
+        <div style="flex: 1;">
+            <label for="threshold">Threshold:</label>
+            <input type="number" id="threshold" name="threshold" value="3" min="1" required>
+        </div>
+        <div style="flex: 1; align-self: flex-end;">
+            <button type="submit">Analyze</button>
+        </div>
+    </form>
+
+    <h2>Results</h2>
+    {% if results %}
         <table>
             <thead>
-                <tr>
-                    <th>IP Address</th>
-                    <th>Failed Attempts</th>
-                    <th>Location</th>
-                </tr>
+            <tr>
+                <th>IP Address</th>
+                <th>Failed Attempts</th>
+                <th>Location</th>
+            </tr>
             </thead>
             <tbody>
-                {% for r in results %}
+            {% for r in results %}
                 <tr>
                     <td>{{ r.ip }}</td>
                     <td>{{ r.count }}</td>
                     <td>{{ r.location }}</td>
                 </tr>
-                {% endfor %}
+            {% endfor %}
             </tbody>
         </table>
-        {% else %}
+    {% else %}
         <p class="no-results">No suspicious IPs found yet.</p>
-        {% endif %}
-    </div>
+    {% endif %}
+</div>
 </body>
 </html>

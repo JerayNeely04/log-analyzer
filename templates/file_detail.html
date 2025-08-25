@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Suspicious IPs for {{ file.filename }}</h1>
+
+    <nav>
+        <a href="{{ url_for('index') }}">Upload & Analyze</a>
+        <a href="{{ url_for('history') }}">History</a>
+    </nav>
+
+    {% if file.ips %}
+        <table>
+            <thead>
+            <tr>
+                <th>IP Address</th>
+                <th>Failed Attempts</th>
+                <th>Location</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for ip in file.ips %}
+                <tr>
+                    <td>{{ ip.ip }}</td>
+                    <td>{{ ip.count }}</td>
+                    <td>{{ ip.location }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="no-results">No suspicious IPs found for this file.</p>
+    {% endif %}
+
+    <div class="back-link">
+        <a href="{{ url_for('history') }}">Back to History</a>
+    </div>
+</div>
+</body>
+</html>
