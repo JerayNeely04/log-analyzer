@@ -1,45 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>File Details</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ file.filename }} Details</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<div class="container">
-    <h1>Suspicious IPs for {{ file.filename }}</h1>
+<body class="bg-gray-900 text-gray-100 font-sans">
+  <header class="bg-gray-800 p-6 shadow-md">
+    <h1 class="text-3xl font-bold text-teal-400">{{ file.filename }}</h1>
+    <p class="text-gray-400">Uploaded at {{ file.upload_time.strftime("%Y-%m-%d %H:%M") }}</p>
+  </header>
 
-    <nav>
-        <a href="{{ url_for('index') }}">Upload & Analyze</a>
-        <a href="{{ url_for('history') }}">History</a>
-    </nav>
-
+  <main class="p-6 max-w-5xl mx-auto">
+    <h2 class="text-xl font-semibold mb-4">Suspicious IPs</h2>
     {% if file.ips %}
-        <table>
-            <thead>
-            <tr>
-                <th>IP Address</th>
-                <th>Failed Attempts</th>
-                <th>Location</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for ip in file.ips %}
-                <tr>
-                    <td>{{ ip.ip }}</td>
-                    <td>{{ ip.count }}</td>
-                    <td>{{ ip.location }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p class="no-results">No suspicious IPs found for this file.</p>
-    {% endif %}
-
-    <div class="back-link">
-        <a href="{{ url_for('history') }}">Back to History</a>
+    <div class="grid md:grid-cols-2 gap-4">
+      {% for ip in file.ips %}
+      <div class="bg-gray-800 p-4 rounded shadow hover:shadow-lg transition">
+        <p><span class="font-bold">IP:</span> {{ ip.ip }}</p>
+        <p><span class="font-bold">Count:</span> {{ ip.count }}</p>
+        <p><span class="font-bold">Location:</span> {{ ip.location }}</p>
+      </div>
+      {% endfor %}
     </div>
-</div>
+    {% else %}
+    <p class="text-gray-400">No suspicious IPs found.</p>
+    {% endif %}
+  </main>
+
+  <footer class="bg-gray-800 p-4 text-center text-gray-500 mt-8">
+    &copy; 2025 Log Analyzer
+  </footer>
 </body>
 </html>

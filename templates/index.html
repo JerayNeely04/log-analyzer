@@ -1,56 +1,76 @@
+<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Log Analyzer Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log Analyzer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<div class="container">
-    <h1>Suspicious Login Analyzer</h1>
+<body class="bg-gray-900 text-gray-100 font-sans">
+  <header class="bg-gray-800 p-4 shadow-md">
+    <h1 class="text-2xl font-bold text-cyan-400 text-center">Suspicious Log Analyzer</h1>
+  </header>
 
-    <nav>
-        <a href="{{ url_for('index') }}">Upload & Analyze</a>
-        <a href="{{ url_for('history') }}">History</a>
-    </nav>
+  <main class="max-w-4xl mx-auto p-6">
+    <!-- Upload Form -->
+    <section class="mb-8 bg-gray-800 rounded-lg p-6 shadow-lg">
+      <h2 class="text-xl font-semibold text-cyan-300 mb-4">Upload Log File</h2>
 
-    <form method="POST" enctype="multipart/form-data">
-        <div style="flex: 2;">
-            <label for="logfile">Select Log File:</label>
-            <input type="file" id="logfile" name="logfile" required>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="mb-4">
+          {% for category, message in messages %}
+            <div class="px-4 py-2 rounded {{ 'bg-green-600' if category=='success' else 'bg-red-600' }}">
+              {{ message }}
+            </div>
+          {% endfor %}
         </div>
-        <div style="flex: 1;">
-            <label for="threshold">Threshold:</label>
-            <input type="number" id="threshold" name="threshold" value="3" min="1" required>
-        </div>
-        <div style="flex: 1; align-self: flex-end;">
-            <button type="submit">Analyze</button>
-        </div>
-    </form>
+      {% endif %}
+      {% endwith %}
 
-    <h2>Results</h2>
+      <form method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
+        <input type="file" name="logfile" class="p-2 rounded bg-gray-700 text-gray-100 border border-gray-600" required>
+        <input type="number" name="threshold" min="1" value="3" class="p-2 rounded bg-gray-700 text-gray-100 border border-gray-600" placeholder="Threshold for suspicious IPs">
+        <button type="submit" class="bg-cyan-500 hover:bg-cyan-400 transition-colors rounded py-2 font-semibold text-gray-900">Analyze Log</button>
+      </form>
+    </section>
+
+    <!-- Results Table -->
     {% if results %}
-        <table>
-            <thead>
-            <tr>
-                <th>IP Address</th>
-                <th>Failed Attempts</th>
-                <th>Location</th>
+    <section class="bg-gray-800 rounded-lg p-6 shadow-lg">
+      <h2 class="text-xl font-semibold text-cyan-300 mb-4">Analysis Results</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full table-auto border-collapse border border-gray-600">
+          <thead>
+            <tr class="bg-gray-700 text-left">
+              <th class="px-4 py-2 border border-gray-600">IP Address</th>
+              <th class="px-4 py-2 border border-gray-600">Count</th>
+              <th class="px-4 py-2 border border-gray-600">Location</th>
             </tr>
-            </thead>
-            <tbody>
+          </thead>
+          <tbody>
             {% for r in results %}
-                <tr>
-                    <td>{{ r.ip }}</td>
-                    <td>{{ r.count }}</td>
-                    <td>{{ r.location }}</td>
-                </tr>
+            <tr class="hover:bg-gray-700">
+              <td class="px-4 py-2 border border-gray-600">{{ r.ip }}</td>
+              <td class="px-4 py-2 border border-gray-600">{{ r.count }}</td>
+              <td class="px-4 py-2 border border-gray-600">{{ r.location }}</td>
+            </tr>
             {% endfor %}
-            </tbody>
+          </tbody>
         </table>
-    {% else %}
-        <p class="no-results">No suspicious IPs found yet.</p>
+      </div>
+    </section>
     {% endif %}
-</div>
+
+    <!-- History Link -->
+    <section class="mt-8 text-center">
+      <a href="{{ url_for('history') }}" class="text-cyan-400 hover:text-cyan-300 font-semibold underline">View Upload History</a>
+    </section>
+  </main>
+
+  <footer class="bg-gray-800 p-4 mt-8 text-center text-gray-500 text-sm">
+    &copy; {{ current_year if current_year else 2025 }} Log Analyzer
+  </footer>
 </body>
 </html>
